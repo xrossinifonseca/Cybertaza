@@ -1,6 +1,9 @@
 
 class ApplicationController < ActionController::API
 
+  include ActionController::Cookies
+
+
   private
   def generate_token(payload)
     JWT.encode(payload, ENV["JWT_KEY"], 'HS256')
@@ -18,5 +21,4 @@ class ApplicationController < ActionController::API
     payload = {customer_id:id}
     token = generate_token(payload)
   end
-
 end
