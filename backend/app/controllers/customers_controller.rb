@@ -1,37 +1,46 @@
 class CustomersController < ApplicationController
 
-  def index
-    @customers = Customer.all
-    render json: @customers
-  end
+  include AccessValidator
 
-
-  def show
-    @customers = Customer.find(params[:id])
-    render json:@customers
-  end
 
   def new
     @customers = Customer.new
   end
 
-  def create
+  def index
+    isloggedin = validate(cookies)
+    if isloggedin
+      @customers = Customer.all
+      render json: {customers: customers_without_password(@customers)}
+    end
+  end
 
+  def show
+    isloggedin = validate(cookies)
+    if isloggedin
+      if Customer.exists?(id:params[:id])
+      @customers = Customer.find(params[:id])
+      render json: {customer:customers_without_password(@customers)}
+      else
+        return render json: {error:"usuário não encontrado"}, status: :unprocessable_entity
+      end
+    end
+  end
+
+  def create
     begin
     Customer.transaction do
-
       if Customer.exists?(email:customer_params[:email])
        return render json: {error:"usuário ja cadastrado"}, status: :unprocessable_entity
       end
-      @customer = Customer.create(customer_params)
 
-      if @customer.save
-        token = create_token(@customer.id)
-      return  render json: {message:"usuário cadastrado com sucesso!",user:@customer,token:token}, status: :ok
+      @customers = Customer.create(customer_params)
 
+      if @customers.save
+        token = create_token(@customers.id)
+      return  render json: {message:"usuário cadastrado com sucesso!",user:@customers,token:token}, status: :ok
     end
-
-      render json: { error: @customer.errors.messages }, status: :unprocessable_entity
+      render json: { error: @customers.errors.messages }, status: :unprocessable_entity
     end
 
     rescue ActiveRecord::RecordInvalid => e
@@ -45,5 +54,8 @@ class CustomersController < ApplicationController
   end
 
 
-
+  private
+  def customers_without_password(customer)
+     customer.as_json(except: :password_digest)
+  end
 end
