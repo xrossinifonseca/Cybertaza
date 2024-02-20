@@ -2,7 +2,6 @@ class CustomersController < ApplicationController
 
   include AccessValidator
 
-
   def new
     @customers = Customer.new
   end
@@ -17,12 +16,12 @@ class CustomersController < ApplicationController
 
   def show
     isloggedin = validate(cookies)
-    if isloggedin
-      if Customer.exists?(id:params[:id])
-      @customers = Customer.find(params[:id])
-      render json: {customer:customers_without_password(@customers)}
+      if isloggedin
+      customer  = find_customer(params[:id])
+      if customer
+      return  render json: {customer:customers_without_password(customer)}
       else
-        return render json: {error:"usuário não encontrado"}, status: :unprocessable_entity
+       render json: {error:"usuário não encontrado"}, status: :unprocessable_entity
       end
     end
   end
@@ -48,14 +47,30 @@ class CustomersController < ApplicationController
     end
   end
 
+  def profile
+    isloggedin = validate(cookies)
+    if isloggedin
+      id = isloggedin['customer_id']
+      customer = find_customer(id)
+      render json: {customer:customers_without_password(customer)}
+    end
+  end
+
   private
   def customer_params
     params.permit(:name,:email,:password)
   end
 
-
-  private
   def customers_without_password(customer)
      customer.as_json(except: :password_digest)
   end
+
+  def find_customer(id)
+    if Customer.exists?(id:id)
+      @customers = Customer.find(id)
+      return   customers_without_password(@customers)
+      end
+      nil
+  end
+
 end
