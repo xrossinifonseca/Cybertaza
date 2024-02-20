@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
     resources :customers, only: [:index, :show, :create, :update, :destroy]
 
+    get '/profile', to: 'customers#profile'
+
     post '/session/login', to: 'sessions#login'
     post '/session/logout', to: 'sessions#logout'
   end
