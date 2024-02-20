@@ -25,7 +25,6 @@ class SessionsController < ApplicationController
       params.permit(:email,:password)
     end
 
-  private
   def set_cookie(token)
     cookies.signed[:auth_token] = {
         value: token,
