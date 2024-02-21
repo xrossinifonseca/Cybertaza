@@ -7,7 +7,7 @@
       token = cookies.signed[:auth_token]
 
     if token.blank?
-      render_unauthorized("Token não encontrado")
+      render_unauthorized("Acesso inválido.")
       return nil
     end
 
