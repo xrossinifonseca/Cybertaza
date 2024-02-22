@@ -3,50 +3,63 @@ class ProductsController < ApplicationController
 include AccessValidator
 
   def index
-    # isloggedin = validate(cookies)
-
-    # if isloggedin
       @products = Product.all
       render json: {products:@products}
-    # end
-
   end
 
-  # GET /products/1 or /products/1.json
   def show
   end
 
-  # GET /products/new
   def new
     @product = Product.new
   end
 
-  # GET /products/1/edit
   def edit
   end
 
-  # POST /products or /products.json
   def create
-    @product = Product.new(product_params)
 
-  end
+    is_logged_in = validate_admin(cookies)
 
-  # PATCH/PUT /products/1 or /products/1.json
+    begin
+      Product.transaction do
+        create_product if is_logged_in
+      end
+
+      rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.message }, status: :unprocessable_entity
+
+      rescue => e
+        p e
+      render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+       end
+    end
+
+
   def update
-
   end
 
-  # DELETE /products/1 or /products/1.json
   def destroy
     @product.destroy!
   end
 
   private
-    def set_product
-      @product = Product.find(params[:id])
-    end
 
-    def product_params
-      params.require(:product).permit(:name, :price, :description)
+  def create_product
+    @product = Product.create(product_params)
+
+    if @product.save
+      render json: { message: "Produto cadastrado com sucesso!", product: @product }, status: :ok
+    else
+      render json: { error: @product.errors.messages }, status: :unprocessable_entity
     end
+  end
+
+  def set_product
+      @product = Product.find(params[:id])
+  end
+
+  def product_params
+      params.require(:product).permit(:name, :price, :description)
+  end
 end
