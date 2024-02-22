@@ -3,7 +3,6 @@
   module AccessValidator
 
     def validate(cookies)
-
       token = cookies.signed[:auth_token]
 
     if token.blank?
@@ -11,19 +10,36 @@
       return nil
     end
 
-    customer_id = decode_token(token)
+    decoded_token = decode_token(token)
 
-    if customer_id.nil?
+    if decoded_token.nil?
       render_unauthorized("Token inválido ou expirado")
       return nil
     end
 
-    customer_id
+    decoded_token
     end
 
 
+    def validate_admin(cookies)
+     decoded_token = validate(cookies)
+
+     if decoded_token && decoded_token["rule"] != "admin"
+      render_forbidden("Acesso não autorizado.")
+      return nil
+     end
+
+     decoded_token
+    end
+
+
+    private
     def render_unauthorized(message)
       render json: { error: message }, status: :unauthorized
+    end
+
+    def render_forbidden(message)
+      render json: { error: message }, status: :forbidden
     end
 
   end
