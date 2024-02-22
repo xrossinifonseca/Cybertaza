@@ -7,7 +7,7 @@ class CustomersController < ApplicationController
   end
 
   def index
-    isloggedin = validate(cookies)
+    isloggedin = validate_admin(cookies)
     if isloggedin
       @customers = Customer.all
       render json: {customers: customers_without_password(@customers)}
@@ -15,7 +15,7 @@ class CustomersController < ApplicationController
   end
 
   def show
-    isloggedin = validate(cookies)
+    isloggedin = validate_admin(cookies)
       if isloggedin
       customer  = find_customer(params[:id])
       if customer
