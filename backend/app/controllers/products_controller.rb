@@ -3,11 +3,20 @@ class ProductsController < ApplicationController
 include AccessValidator
 
   def index
-      @products = Product.all
-      render json: {products:@products}
+      @products = Product.page(params[:page]).per(params[:per_page])
+      total_pages = @products.total_pages
+
+      products_with_images = @products.map do |product|
+          { id: product.id, name: product.name,price:product.price, image_url: url_for(product.image) }
+      end
+
+      render json: {products:products_with_images, total_pages:total_pages}
   end
 
   def show
+    @product = Product.find(params[:id])
+    # @image_url = rails_blob_path(@product.image, only_path: true)
+    render json: url_for(@product.image)
   end
 
   def new
@@ -35,6 +44,10 @@ include AccessValidator
        end
     end
 
+  # def latest
+  #   @product = Product.latest.to_json(include: [:image])
+  #   render json: @product
+  # end
 
   def update
   end
@@ -60,6 +73,7 @@ include AccessValidator
   end
 
   def product_params
-      params.require(:product).permit(:name, :price, :description)
+    params.permit(:name, :description, :price,:image)
+
   end
 end

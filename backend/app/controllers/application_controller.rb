@@ -34,5 +34,11 @@ class ApplicationController < ActionController::API
         secure: true,
         same_site: :strict
       }
+
+      cookies.signed[:check_token] = {
+        value: "is authenticated",
+        secure: true,
+        same_site: :strict
+      }
   end
 end

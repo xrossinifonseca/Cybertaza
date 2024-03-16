@@ -1,5 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <main>oi</main>
+  <div>
+    <h1>nav</h1>
+  </div>
 </template>
