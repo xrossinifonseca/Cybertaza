@@ -7,7 +7,11 @@ include AccessValidator
       total_pages = @products.total_pages
 
       products_with_images = @products.map do |product|
-          { id: product.id, name: product.name,price:product.price, image_url: url_for(product.image) }
+        if product.image.attached?
+          { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
+        else
+          { id: product.id, name: product.name,price:product.price,color:product.color, image_url: ""  }
+        end
       end
 
       render json: {products:products_with_images, total_pages:total_pages}
@@ -73,7 +77,7 @@ include AccessValidator
   end
 
   def product_params
-    params.permit(:name, :description, :price,:image)
+    params.permit(:name,:price,:color_id,:image)
 
   end
 end
