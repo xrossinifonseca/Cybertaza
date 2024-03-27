@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   scope "api/v1" do
 
-    # resources :users
+    resources :colors
     resources :products
     resources :customers, only: [:index, :show, :create, :update, :destroy]
 
@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
     post '/session/login', to: 'sessions#login'
     post '/session/logout', to: 'sessions#logout'
+
+
 
     scope "/admin" do
       post "/login", to: 'admin#login'
