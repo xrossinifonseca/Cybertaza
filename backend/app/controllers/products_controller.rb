@@ -57,8 +57,29 @@ include AccessValidator
   end
 
   def destroy
-    @product.destroy!
-  end
+
+    is_logged_in = validate_admin(cookies)
+
+    product = set_product
+
+    begin
+      Product.transaction do
+        if is_logged_in
+          product.destroy
+          render json: { message: "produto deletado com sucesso!" }, status: :ok
+        end
+      end
+
+
+      rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.message }, status: :unprocessable_entity
+
+      rescue => e
+        p e
+      render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+       end
+    end
+
 
   private
 
@@ -72,12 +93,14 @@ include AccessValidator
     end
   end
 
+
+
+
   def set_product
       @product = Product.find(params[:id])
   end
 
   def product_params
     params.permit(:name,:price,:color_id,:image)
-
   end
 end
