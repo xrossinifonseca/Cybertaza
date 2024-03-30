@@ -65,29 +65,20 @@ include AccessValidator
 
     is_logged_in = validate_admin(cookies)
 
-    product = set_product
-
     begin
-
-      Permissions
-
-      Product.transaction do
-        if is_logged_in
-          product.destroy
-          render json: { message: "produto deletado com sucesso!" }, status: :ok
+      if is_logged_in
+        user = User.find(is_logged_in["user_id"])
+        Product.transaction do
+          product = Products::DeleteProductService.new(user).delete_product(params[:id])
+          render json: { message: "Produto removido com sucesso!", product: product }, status: :ok
         end
       end
-
-
-      rescue ActiveRecord::RecordInvalid => e
+    rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
-
-      rescue => e
-        p e
-      render json: { error: e.messages }, status: :internal_server_error
-       end
+    rescue => e
+      handleErrorExcpetion(e)
     end
-
+  end
 
   private
 
@@ -98,4 +89,19 @@ include AccessValidator
   def product_params
     params.permit(:name,:price,:color_id,:image)
   end
+
+
+  def handleErrorExcpetion(e)
+
+    case e.message
+    when "Usuário não tem permissão para criar produtos."
+      render json: { error: e.message }, status: :forbidden
+    when "produto não encontrado."
+      render json: { error: e.message }, status: :not_found
+    else
+      render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+    end
+
+  end
+
 end
