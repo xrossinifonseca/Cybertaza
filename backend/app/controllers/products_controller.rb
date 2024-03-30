@@ -48,11 +48,7 @@ include AccessValidator
       render json: { error: e.message }, status: :unprocessable_entity
 
       rescue => e
-        if e.message == "Usuário não tem permissão para criar produtos"
-          render json: { error: e.message }, status: :forbidden
-        else
-          render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
-        end
+        handleErrorExcpetion(e)
        end
     end
 
@@ -94,7 +90,7 @@ include AccessValidator
   def handleErrorExcpetion(e)
 
     case e.message
-    when "Usuário não tem permissão para criar produtos."
+    when "Usuário sem permissão."
       render json: { error: e.message }, status: :forbidden
     when "produto não encontrado."
       render json: { error: e.message }, status: :not_found
