@@ -35,23 +35,28 @@ include AccessValidator
     is_logged_in = validate_admin(cookies)
 
     begin
-      Product.transaction do
-        create_product if is_logged_in
+      if is_logged_in
+        user = User.find(is_logged_in["user_id"])
+
+        Product.transaction do
+          product = Products::CreateProductService.new(user).create_product(product_params)
+          render json: { message: "Produto cadastrado com sucesso!", product: product }, status: :created
+        end
       end
 
       rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
 
       rescue => e
-        p e
-      render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+        if e.message == "Usuário não tem permissão para criar produtos"
+          render json: { error: e.message }, status: :forbidden
+        else
+          render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+        end
        end
     end
 
-  # def latest
-  #   @product = Product.latest.to_json(include: [:image])
-  #   render json: @product
-  # end
+
 
   def update
   end
@@ -63,6 +68,9 @@ include AccessValidator
     product = set_product
 
     begin
+
+      Permissions
+
       Product.transaction do
         if is_logged_in
           product.destroy
@@ -76,25 +84,12 @@ include AccessValidator
 
       rescue => e
         p e
-      render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+      render json: { error: e.messages }, status: :internal_server_error
        end
     end
 
 
   private
-
-  def create_product
-    @product = Product.create(product_params)
-
-    if @product.save
-      render json: { message: "Produto cadastrado com sucesso!", product: @product }, status: :ok
-    else
-      render json: { error: @product.errors.messages }, status: :unprocessable_entity
-    end
-  end
-
-
-
 
   def set_product
       @product = Product.find(params[:id])
