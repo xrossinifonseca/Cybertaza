@@ -1,7 +1,4 @@
 class User < ApplicationRecord
-  belongs_to :privileges
-
+  enum role: [:member,:admin]
   has_secure_password
-
-
 end
