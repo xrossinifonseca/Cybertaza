@@ -9,17 +9,13 @@ module Products
     end
 
     def create_product(params)
-      if can_create?
+      raise "Usuário sem permissão." if !has_permission?
        product = Product.create!(params)
-       return product
-       end
-
-      raise "Usuário não tem permissão para criar produtos"
     end
 
 
     private
-    def can_create?
+    def has_permission?
     @user.admin?
     end
   end
