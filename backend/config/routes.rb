@@ -6,13 +6,17 @@ Rails.application.routes.draw do
     resources :products
     resources :customers, only: [:index, :show, :create, :update, :destroy]
 
-    get '/profile', to: 'customers#profile'
+    # product
+    patch '/products', to: 'products#update'
 
+
+    # customers
     post '/session/login', to: 'sessions#login'
     post '/session/logout', to: 'sessions#logout'
+    get '/profile', to: 'customers#profile'
 
 
-
+    # admin
     scope "/admin" do
       post "/login", to: 'admin#login'
       post "/logout", to: 'admin#logout'
