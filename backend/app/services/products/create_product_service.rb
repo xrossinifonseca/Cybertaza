@@ -16,9 +16,7 @@ module Products
 
     private
     def has_permission?
-    @user.admin?
+      PermissionsAdmin::PERMISSIONS[@user.role].include?("create")
     end
   end
-
-
 end
