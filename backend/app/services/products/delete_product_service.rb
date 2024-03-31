@@ -19,7 +19,7 @@ module Products
 
     private
     def has_permission?
-    @user.admin?
+      PermissionsAdmin::PERMISSIONS[@user.role].include?("delete")
     end
   end
 end
