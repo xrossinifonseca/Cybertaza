@@ -31,39 +31,42 @@ include AccessValidator
   end
 
   def create
-
-    is_logged_in = validate_admin(cookies)
-
     begin
-      if is_logged_in
-        user = User.find(is_logged_in["user_id"])
-
+      if is_user_logged_in?
+        user = is_user_logged_in?
         Product.transaction do
-          product = Products::CreateProductService.new(user).create_product(product_params)
-          render json: { message: "Produto cadastrado com sucesso!", product: product }, status: :created
+        product = Products::CreateProductService.new(user).create_product(product_params)
+        render json: { message: "Produto cadastrado com sucesso!", product: product }, status: :created
         end
       end
-
       rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
-
       rescue => e
         handleErrorExcpetion(e)
        end
-    end
-
-
+  end
 
   def update
+    begin
+    if is_user_logged_in?
+      user = is_user_logged_in?
+      Product.transaction do
+        product = Products::UpdateProductService.new(user).update_product(params[:id]).update!(product_params)
+        render json: {message:"Produto atualizado com sucesso!"}, status: :ok
+      end
+    end
+
+    rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
+    rescue => e
+    handleErrorExcpetion(e)
+    end
   end
 
   def destroy
-
-    is_logged_in = validate_admin(cookies)
-
     begin
-      if is_logged_in
-        user = User.find(is_logged_in["user_id"])
+      if is_user_logged_in?
+        user = is_user_logged_in?
         Product.transaction do
           product = Products::DeleteProductService.new(user).delete_product(params[:id])
           render json: { message: "Produto removido com sucesso!", product: product }, status: :ok
@@ -98,6 +101,14 @@ include AccessValidator
       render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
     end
 
+  end
+
+  def is_user_logged_in?
+    check_login = validate_admin(cookies)
+
+    if check_login
+     return user = User.find(check_login["user_id"])
+    end
   end
 
 end
