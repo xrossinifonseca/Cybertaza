@@ -16,6 +16,7 @@ This is a project for a mug store under development, with the frontend developed
 - Tailwind CSS
 - DaisyUi.js
 - TypeScript
+- Chart.js
 
 ### Backend
 - Ruby on Rails
