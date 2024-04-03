@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import InputComponent from '@/components/input/InputComponent.vue'
-import Colors from '@/components/Colors.vue'
-import { createProduct } from '@/service/axios'
-import { ref } from 'vue'
-import { useProductsStore } from '@/stores/products/productsStore'
+import InputComponent from '../../components/input/InputComponent.vue'
+import Colors from '../../components/Colors.vue'
+import { createProduct } from '../../service/axios'
+import { reactive, ref } from 'vue'
+import { useProductsStore } from '../../stores/products/productsStore'
+import { notification } from '../../utils/notification'
+import { AxiosError } from 'axios'
 
 type Values = {
   name: string
@@ -12,63 +14,85 @@ type Values = {
   image: File | null
 }
 
-type Errors = Omit<Values, 'image' | 'color_id'> & { image: string; color_id: string }
-
-const productsStore = useProductsStore()
+type Errors = Omit<Values, 'image' | 'color_id'> & {
+  image: string
+  color_id: string
+  [key: string]: string
+}
 const emit = defineEmits(['close-modal'])
 
-const values = ref<Values>({
+const productsStore = useProductsStore()
+const values = reactive<Values>({
   name: '',
   price: '',
   color_id: 0,
   image: null
 })
-const errors = ref<Errors>({
+
+const errors = reactive<Errors>({
   name: '',
   price: '',
   color_id: '',
   image: ''
 })
 const imgUrl = ref<string>('')
+const loading = ref<boolean>(false)
 
 const handleSubmit = async () => {
-  for (const key of Object.keys(errors.value)) {
-    errors.value[key] = ''
+  for (const key of Object.keys(errors)) {
+    errors[key] = ''
   }
 
-  if (!values.value.price || !values.value.name || !imgUrl.value) {
-    if (!values.value.name) {
-      errors.value.name = 'Necessário informar nome do produto'
+  if (!values.price || !values.name || !imgUrl.value) {
+    if (!values.name) {
+      errors.name = 'Necessário informar nome do produto'
     }
-    if (!values.value.price) {
-      errors.value.price = 'Necessário informar preço do produto.'
+    if (!values.price) {
+      errors.price = 'Necessário informar preço do produto.'
     }
 
     if (!imgUrl.value) {
-      errors.value.image = 'Necessário enviar uma foto do produto'
+      errors.image = 'Necessário enviar uma foto do produto'
     }
 
-    if (!values.value.color_id) {
-      errors.value.color_id = 'Necessário selecionar a cor do produto'
+    if (!values.color_id) {
+      errors.color_id = 'Necessário selecionar a cor do produto'
     }
 
     return
   }
 
-  await createProduct(values.value)
-  productsStore.getProducts()
-  emit('close-modal')
+  try {
+    loading.value = true
+
+    await createProduct(values)
+    notification.success('Produto cadastrado com sucesso!')
+    productsStore.getProducts()
+    emit('close-modal')
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const { response } = error
+      notification.error(response?.data?.error)
+      return
+    }
+    notification.error('Houve um falha interna. tente novamente mais tarde.')
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleImageChange = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const file = target.files[0]
-  values.value.image = file
-  imgUrl.value = URL.createObjectURL(file)
+
+  if (target.files) {
+    const file = target.files[0]
+    values.image = file
+    imgUrl.value = URL.createObjectURL(file)
+  }
 }
 
 const getColorId = (id: number) => {
-  values.value.color_id = id
+  values.color_id = id
 }
 </script>
 
@@ -82,7 +106,7 @@ const getColorId = (id: number) => {
       <div class="flex justify-between items-center">
         <h3 class="text-2xl text-white">Criar novo produto</h3>
         <button
-          @click="$emit('close-modal')"
+          @click.capture="$emit('close-modal')"
           class="btn bg-transparent hover:bg-transparent border-none"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-10">
@@ -96,10 +120,8 @@ const getColorId = (id: number) => {
 
       <form class="space-y-5" @submit.prevent="handleSubmit">
         <div
-          :class="{
-            'border-red-500': errors.image
-          }"
-          class="relative border-2 border-gray-300 border-dashed rounded-lg p-6"
+          :data-error="errors.image ? true : false"
+          class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 data-[error=true]:border-red-500"
           id="dropzone"
         >
           <div v-if="!imgUrl">
@@ -156,10 +178,14 @@ const getColorId = (id: number) => {
           <span v-if="errors.color_id" class="text-medium text-red-500 text-lg">{{
             errors.color_id
           }}</span>
-          <Colors :selectedId="values.color_id" :getId="getColorId" />
+          <Colors :selectedId="values.color_id" @get-color="getColorId" />
         </div>
+
         <div class="flex justify-center">
-          <button type="submit" class="btn btn-lg btn-success">Cadastrar</button>
+          <button :disabled="loading" type="submit" class="btn btn-lg btn-success min-w-32">
+            <span>Cadastrar</span>
+            <span class="loading loading-spinner" v-if="loading"></span>
+          </button>
         </div>
       </form>
     </div>

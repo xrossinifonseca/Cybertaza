@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginViewVue from '../views/LoginView.vue'
-import { useAuthAdminStore } from '@/stores/auth/authAdminStore'
-import ProductsViewVue from '@/views/ProductsView.vue'
-import LayoutView from '@/views/LayoutView.vue'
+import { useAuthAdminStore } from '../stores/auth/authAdminStore'
+import ProductsViewVue from '../views/ProductsView.vue'
+import LayoutView from '../views/LayoutView.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 
 const router = createRouter({

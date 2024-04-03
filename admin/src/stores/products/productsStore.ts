@@ -1,18 +1,17 @@
-import { allProducts } from '@/service/axios'
+import { allProducts } from '../../service/axios'
 import { defineStore } from 'pinia'
+import type { Product } from 'src/types/productTypes'
 import { ref } from 'vue'
 
 interface Products {
   id: number
   name: string
   price: string
+  color_id: number
   image_url: string
-  description: string
   created_at: string
   updated_at: string
 }
-
-// interface Product extends Omit<Products, 'id' | 'created_at' | 'updated_at'> {}
 
 export const useProductsStore = defineStore('productsStore', () => {
   const products = ref<Products[]>([])
@@ -21,11 +20,15 @@ export const useProductsStore = defineStore('productsStore', () => {
 
   const getProducts = async () => {
     const response = await allProducts(1, 10)
-
     loading.value = false
     total_pages.value = response.data.total_pages
     products.value = response.data.products
   }
 
-  return { loading, getProducts, products, total_pages }
+  const removeProduct = (id: number) => {
+    const removed = products.value.filter((product) => product.id !== id)
+    products.value = removed
+  }
+
+  return { loading, getProducts, products, total_pages, removeProduct }
 })

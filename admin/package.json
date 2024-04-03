@@ -1,5 +1,5 @@
 {
-  "name": "cybertaza_client",
+  "name": "cybertaza_admin",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,7 +18,8 @@
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
     "vue-chart-3": "^3.1.8",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vue-toast-notification": "^3.1.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
