@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import Vue, { ref } from 'vue'
-import { api } from '@/service/axios.ts'
+import { api } from '../service/axios'
 
 defineProps<{
-  getId: () => any
   selectedId: number
 }>()
 
@@ -42,7 +41,7 @@ fetchColors()
       type="button"
       v-for="(color, index) in colors"
       :key="color.id"
-      :onClick="() => getId(color.id)"
+      @click.capture="$emit('get-color', color.id)"
       :class="{ 'bg-slate-950': selectedId === color.id }"
       class="text-sm flex items-center gap-2 rounded-full p-2 border text-white hover:bg-slate-950 cursor-pointer"
     >
