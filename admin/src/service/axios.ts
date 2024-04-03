@@ -8,7 +8,7 @@ interface LoginCustomer {
 export interface Product {
   name: string
   price: string
-  color_id: string
+  color_id: number
   image?: File | null
 }
 
@@ -19,27 +19,19 @@ export const api = axios.create({
 
 export const createProduct = async (values: Product) => {
   const formData = new FormData()
-
   formData.append('name', values.name)
   formData.append('price', values.price)
-  formData.append('color_id', values.color_id)
+  formData.append('color_id', values.color_id.toString())
 
   if (values.image) {
     formData.append('image', values.image, values.image.name)
   }
-
-  try {
-    const response = await api.post('/products', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-
-    return response.data
-  } catch (error) {
-    console.error(error)
-    // throw error
-  }
+  const response = await api.post('/products', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  return response.data
 }
 
 export const login = async (body: LoginCustomer): Promise<AxiosResponse> => {
@@ -50,6 +42,6 @@ export const allProducts = async (page: number, perPage: number) => {
   return api.get(`products?page=${page}&per_page=${perPage}`)
 }
 
-// export const createProduct = async (values: Product) => {
-//   return api.post('products', values)
-// }
+export const deleteProductById = async (id: number) => {
+  return api.delete(`products/${id}`)
+}
