@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RouterView } from 'vue-router'
-import AsideComponent from '../components/admin/aside/AsideComponent.vue'
+import AsideComponent from '../components/aside/AsideComponent.vue'
 </script>
 
 <template>
@@ -8,7 +8,6 @@ import AsideComponent from '../components/admin/aside/AsideComponent.vue'
     <aside class="h-screen w-60 relative hidden lg:block">
       <AsideComponent />
     </aside>
-
     <main class="w-full">
       <RouterView />
     </main>

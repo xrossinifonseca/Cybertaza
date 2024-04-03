@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import StarsBanner from '@/components/StarsBanner.vue'
-import InputComponent from '@/components/input/InputComponent.vue'
-import { validateEmail } from '@/validations/schemas'
-import { useAuthAdminStore } from '@/stores/auth/authAdminStore'
+import StarsBanner from '../components/StarsBanner.vue'
+import InputComponent from '../components/input/InputComponent.vue'
+import { validateEmail } from '../validations/schemas'
+import { useAuthAdminStore } from '../stores/auth/authAdminStore'
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
