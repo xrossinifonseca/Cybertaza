@@ -1,14 +1,14 @@
-# Cybertaza - Loja de canecas
+# Cybertaza - Mug Store
 
-Este é um projeto de uma loja de canecas em desenvolvimento, com o frontend desenvolvido em Vue.js e o backend em Ruby on Rails.
+This is a project for a mug store under development, with the frontend developed in Vue.js and the backend in Ruby on Rails.
 
-## Funcionalidades
+## Features
 
-- Visualização de dados analíticos do e-commerce
-- Cadastro de novos produtos
-- Visualização e gerenciamento de pedidos
+- Viewing analytical data of the e-commerce
+- Registering new products
+- Viewing and managing orders
 
-## Tecnologias Utilizadas
+## Technologies Used
 
 ### Frontend
 - Vue.js
