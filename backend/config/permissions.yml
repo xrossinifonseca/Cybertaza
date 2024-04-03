@@ -1,0 +1,6 @@
+admin:
+  - create
+  - delete
+  - view
+member:
+  - view
