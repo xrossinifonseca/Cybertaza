@@ -12,6 +12,7 @@ This is a project for a mug store under development, with the frontend developed
 
 ### Frontend
 - Vue.js
+- Pinia
 - Tailwind CSS
 - DaisyUi.js
 - TypeScript
