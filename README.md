@@ -22,3 +22,4 @@ This is a project for a mug store under development, with the frontend developed
 - Ruby on Rails
 - MySQL
 - Active Storage
+- JWT
