@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
     # admin
     scope "/admin" do
+      get "/user", to: 'admin#user_info'
       post "/login", to: 'admin#login'
       post "/logout", to: 'admin#logout'
     end

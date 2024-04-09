@@ -3,18 +3,16 @@ class ProductsController < ApplicationController
 include AccessValidator
 
   def index
-      @products = Product.page(params[:page]).per(params[:per_page])
-      total_pages = @products.total_pages
-
-      products_with_images = @products.map do |product|
+    @products  = Products::FilterProductListService.filter_product(params[:assortment]).page(params[:page]).per(params[:per_page])
+    total_pages = @products.total_pages
+    product_list = @products.map do |product|
         if product.image.attached?
           { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
         else
           { id: product.id, name: product.name,price:product.price,color:product.color, image_url: ""  }
         end
-      end
-
-      render json: {products:products_with_images, total_pages:total_pages}
+    end
+      render json: {products: product_list,total_pages: total_pages}
   end
 
   def show
@@ -25,9 +23,6 @@ include AccessValidator
 
   def new
     @product = Product.new
-  end
-
-  def edit
   end
 
   def create
@@ -78,6 +73,7 @@ include AccessValidator
       handleErrorExcpetion(e)
     end
   end
+
 
   private
 
