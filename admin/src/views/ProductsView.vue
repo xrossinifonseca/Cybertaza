@@ -2,7 +2,7 @@
 import ModalCreate from '../components/products/ModalCreate.vue'
 import LoadingBalls from '../components/loading/LoadingBalls.vue'
 import TableProducts from '../components/products/TableProducts.vue'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { useProductsStore } from '../stores/products/productsStore'
 import { storeToRefs } from 'pinia'
 
