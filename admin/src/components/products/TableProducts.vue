@@ -2,11 +2,16 @@
 import { ref } from 'vue'
 import type { Product } from '../../types/productTypes'
 import ModalDelete from './ModalDelete.vue'
+import { useUserStore } from '../../stores/user/userStore'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   products: Array<Product>
   total_pages: number
 }>()
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 
 const product = ref<Product>({} as Product)
 const modalDelete = ref(false)
@@ -60,7 +65,7 @@ const closeModal = () => {
               </td>
               <td>R$ {{ product?.price }}</td>
               <td>{{ product?.color?.name }}</td>
-              <th>
+              <th v-if="user?.permissions.includes('delete')">
                 <button @click.capture="getProduct(product)" class="btn btn-outline btn-error">
                   Apagar
                 </button>

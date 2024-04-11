@@ -45,3 +45,7 @@ export const allProducts = async (page: number, perPage: number) => {
 export const deleteProductById = async (id: number) => {
   return api.delete(`products/${id}`)
 }
+
+export const getUser = async () => {
+  return api.get('admin/user')
+}

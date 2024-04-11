@@ -2,18 +2,22 @@ import router from '../../router'
 import { login } from '../../service/axios'
 import { AxiosError } from 'axios'
 import { defineStore } from 'pinia'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
+import { useUserStore } from '../user/userStore'
 
 export const useAuthAdminStore = defineStore('adminAuthStore', () => {
   const errorResponse = ref<string>('')
   const authenticated = ref<boolean>(document.cookie.includes('check_token'))
-  // const user = reactive({})
+  const { setUser } = useUserStore()
 
   const loginAdmin = async (values: { email: string; password: string }) => {
     errorResponse.value = ''
 
     try {
-      const response = await login(values)
+      const { data } = await login(values)
+
+      setUser(data?.user)
+
       authenticated.value = true
       router.push('/')
     } catch (error: unknown) {
