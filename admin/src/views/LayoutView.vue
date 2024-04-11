@@ -18,7 +18,7 @@ fetchInformations()
 </script>
 
 <template>
-  <div class="bg-black min-h-screen flex">
+  <div class="bg-black min-h-screen flex" v-show="!loading">
     <aside class="h-screen w-60 relative hidden lg:block">
       <AsideComponent />
     </aside>
