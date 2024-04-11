@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
+import { getUser } from '../../service/axios'
 import { ref } from 'vue'
 
 interface User {
   id: number
   name: string
-  role: string
-  email: string
+  permissions?: { [key: string]: string }[]
 }
 
 export const useUserStore = defineStore('userAdminStore', () => {
@@ -17,8 +17,12 @@ export const useUserStore = defineStore('userAdminStore', () => {
 
   const getUserInformations = async () => {
     if (user.value !== null) return
-
-    console.log('call informations endpoint')
+    try {
+      const { data } = await getUser()
+      user.value = data
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return { user, setUser, getUserInformations }
