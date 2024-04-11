@@ -5,7 +5,7 @@ import { ref } from 'vue'
 interface User {
   id: number
   name: string
-  permissions?: { [key: string]: string }[]
+  permissions: string[]
 }
 
 export const useUserStore = defineStore('userAdminStore', () => {
