@@ -1,9 +1,34 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import AnalyticsIcon from '../icons/AnalyticsIcon.vue'
-import MugIcon from '../icons/MugIcon.vue'
-import CustomersIcon from '../icons/CustomersIcon.vue'
-import OrdersIcon from '../icons/OrdersIcon.vue'
+// import AnalyticsIcon from '../icons/AnalyticsIcon.vue'
+// import MugIcon from '../icons/MugIcon.vue'
+// import CustomersIcon from '../icons/CustomersIcon.vue'
+// import OrdersIcon from '../icons/OrdersIcon.vue'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '../../stores/user/userStore'
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
+
+const list = [
+  {
+    name: 'Analítico',
+    href: '/'
+  },
+  {
+    name: 'produtos',
+    href: 'produtos'
+  },
+
+  {
+    name: 'Pedidos',
+    href: '/'
+  },
+  {
+    name: 'Clientes',
+    href: '/'
+  }
+]
 </script>
 
 <template>
@@ -15,28 +40,10 @@ import OrdersIcon from '../icons/OrdersIcon.vue'
 
     <div class="w-full">
       <ul class="space-y-5 text-4xl font-medium w-full p-2">
-        <RouterLink to="/">
-          <li class="btn btn-ghost text-white text-lg">
-            <i> <AnalyticsIcon color="white" :size="25" /></i>
-            <span>Analítico</span>
-          </li>
-        </RouterLink>
-        <RouterLink to="produtos">
-          <li class="btn btn-ghost text-white text-lg">
-            <i> <MugIcon color="white" :size="25" /></i>
-            <span>Produtos</span>
-          </li>
-        </RouterLink>
-        <RouterLink to="/">
-          <li class="btn btn-ghost text-white text-lg">
-            <i> <CustomersIcon color="white" :size="25" /></i>
-            <span>Clientes</span>
-          </li>
-        </RouterLink>
-        <RouterLink to="/">
-          <li class="btn btn-ghost text-white text-lg">
-            <i> <OrdersIcon color="white" :size="25" /></i>
-            <span>Pedidos</span>
+        <RouterLink v-for="(item, index) in list" :to="item.href" :key="index">
+          <li class="btn btn-ghost text-white text-lg" v-if="user?.permissions.includes('view')">
+            <!-- <i> <AnalyticsIcon color="white" :size="25" /></i> -->
+            <span>{{ item.name }}</span>
           </li>
         </RouterLink>
       </ul>
