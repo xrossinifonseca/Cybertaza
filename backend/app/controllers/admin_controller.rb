@@ -9,7 +9,8 @@ class AdminController < ApplicationController
     if user && user.authenticate(session_params[:password])
       token = create_admin_token(user.id)
       set_cookie(token)
-      return render json: { message: "Login bem-sucedido", user: user.as_json(except: :password_digest) }, status: :ok
+      user_info = user_with_permissions(user)
+      return render json: { message: "Login bem-sucedido", user:user_info }, status: :ok
     end
 
     render json: { error: "Credenciais inválidas" }, status: :unauthorized
@@ -23,16 +24,19 @@ class AdminController < ApplicationController
   def user_info
     is_user_athenticated = validate_admin(cookies)
     if is_user_athenticated
-      user = User.find(is_user_athenticated["user_id"])
-      permissions = Permission::PERMISSION[user.role.to_sym]
-      user_with_permissions = {id:user.id, name: user.name, permissions: permissions}
-      render json: user_with_permissions , status: :ok
+      user_info = user_with_permissions(User.find(is_user_athenticated["user_id"]))
+      render json: user_info , status: :ok
       end
   end
 
   private
   def session_params
     params.require(:admin).permit(:email, :password)
+  end
+
+  def user_with_permissions(user)
+    permissions = Permission::PERMISSION[user.role.to_sym]
+    user_with_permissions = {id:user.id, name: user.name, permissions: permissions}
   end
 
 
