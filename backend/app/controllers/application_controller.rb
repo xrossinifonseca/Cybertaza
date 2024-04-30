@@ -2,31 +2,28 @@
 class ApplicationController < ActionController::API
 
   include ActionController::Cookies
+  include JwtManager
+  include AccessValidator
 
+  before_action :authenticate_admin
 
-  private
-  def generate_token(payload)
-    JWT.encode(payload, ENV["JWT_KEY"], 'HS256')
-  end
-
-  def decode_token(token)
-    JWT.decode(token, ENV["JWT_KEY"], true, algorithm: 'HS256')[0]
-
-  rescue JWT::DecodeError
-    nil
-  end
 
   protected
   def create_customer_token(id)
-    payload = {customer_id:id, rule:"cliente"}
+    payload = {customer_id:id, role:"customer"}
     token = generate_token(payload)
+    set_cookie(token)
   end
 
   def create_admin_token(id)
-    payload = {user_id:id, rule:"admin"}
+    payload = {user_id:id, role:"admin"}
     token = generate_token(payload)
+    set_cookie(token)
+
   end
 
+
+  private
   def set_cookie(token)
     cookies.signed[:auth_token] = {
         value: token,
@@ -41,4 +38,13 @@ class ApplicationController < ActionController::API
         same_site: :strict
       }
   end
+
+  def authenticate_admin
+   if decoded = validate_admin_session(cookies)
+    @current_user = User.find(decoded["user_id"])
+    else
+    nil
+    end
+  end
+
 end
