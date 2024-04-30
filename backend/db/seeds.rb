@@ -1,9 +1,20 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+
+if Color.count.zero?
+
+  colors = [
+    { name: 'red', hex_code: '#dc2626' },
+    { name: 'green', hex_code: '#16a34a' },
+    { name: 'blue', hex_code: '#2563eb' },
+    {name:'gray',hex_code:"#6b7280"},
+    {name:'purple',hex_code:"#9333ea"},
+    {name:'pink',hex_code:"#db2777"},
+    {name:'white',hex_code:"#fff"},
+    {name:'black',hex_code:"#030712"},
+  ]
+
+
+
+  colors.each do |color|
+    Color.create(color)
+  end
+end
