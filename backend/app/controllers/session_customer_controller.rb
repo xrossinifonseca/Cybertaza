@@ -1,12 +1,15 @@
-class SessionsController < ApplicationController
+class SessionCustomerController < ApplicationController
 
 
     def login
       customer =Customer.find_by(email:session_params[:email])
 
       if customer && customer.authenticate(session_params[:password])
+
         token = create_customer_token(customer.id)
+
         set_cookie(token)
+
         return render json: { message: "Login bem-sucedido", customer: customer.as_json(except: :password_digest) }, status: :ok
       end
 
@@ -21,7 +24,7 @@ class SessionsController < ApplicationController
 
     private
     def session_params
-      params.require(:session).permit(:email, :password)
+      params.require(:session_customer).permit(:email, :password)
     end
 
 
