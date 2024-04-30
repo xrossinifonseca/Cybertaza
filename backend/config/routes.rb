@@ -11,16 +11,16 @@ Rails.application.routes.draw do
 
 
     # customers
-    post '/session/login', to: 'sessions#login'
-    post '/session/logout', to: 'sessions#logout'
+    post '/session/login', to: 'session_customer#login'
+    post '/session/logout', to: 'session_customer#logout'
     get '/profile', to: 'customers#profile'
 
 
     # admin
     scope "/admin" do
       get "/user", to: 'admin#user_info'
-      post "/login", to: 'admin#login'
-      post "/logout", to: 'admin#logout'
+      post "/login", to: 'session_admin#login'
+      post "/logout", to: 'session_admin#logout'
     end
 
   end
