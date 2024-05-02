@@ -4,8 +4,11 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:destroy, :update,:show]
 
   def index
-    @products  = Products::FilterProductListService.filter_product(params[:assortment]).page(params[:page]).per(params[:per_page])
+
+
+    @products  = Products::FilterProductListService.by_assortment(params)
     total_pages = @products.total_pages
+
     product_list = @products.map do |product|
         if product.image.attached?
           { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
