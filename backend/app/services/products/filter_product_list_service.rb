@@ -13,11 +13,7 @@ module Products
       page = params[:page]
       per_page = params[:per_page]
 
-      products = if colors.is_a?(Array) && !colors.empty?
-               Product.joins(:color).where("colors.name IN (?)", colors)
-             else
-               Product.all
-             end
+      products = Product.by_colors(colors)
 
       case price_order
       when 'lowest_price'
