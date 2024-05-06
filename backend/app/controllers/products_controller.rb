@@ -1,22 +1,12 @@
 class ProductsController < ApplicationController
 
-  skip_before_action :authenticate_admin, only: [:index]
+  skip_before_action :authenticate_admin, only: [:index, :search]
   before_action :set_product, only: [:destroy, :update,:show]
 
   def index
-
-
-    @products  = Products::FilterProductListService.by_assortment(params)
-    total_pages = @products.total_pages
-
-    product_list = @products.map do |product|
-        if product.image.attached?
-          { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
-        else
-          { id: product.id, name: product.name,price:product.price,color:product.color, image_url: ""  }
-        end
-    end
-      render json: {products: product_list,total_pages: total_pages}
+    products  = Products::FilterProductListService.by_assortment(params)
+    total_pages = products.total_pages
+    render json: {products: products_list(products),total_pages: total_pages}
   end
 
   def show
@@ -24,6 +14,19 @@ class ProductsController < ApplicationController
     render json: url_for(@product.image)
   end
 
+  def search
+    query = params[:search_filter]
+
+    if query.nil?
+      products = []
+    else
+      product_name = Product.arel_table[:name]
+      products_found = Product.where(product_name.matches("%#{query}%")).limit(10)
+      products = products_list(products_found)
+    end
+
+    render json: {products:products}
+  end
 
   def create
     begin
@@ -77,6 +80,17 @@ class ProductsController < ApplicationController
 
   def product_params
     params.permit(:name,:price,:color_id,:image)
+  end
+
+  def products_list(products)
+      products.map do |product|
+      if product.image.attached?
+        { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
+      else
+        { id: product.id, name: product.name,price:product.price,color:product.color, image_url: ""  }
+      end
+  end
+
   end
 
 
