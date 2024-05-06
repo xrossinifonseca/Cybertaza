@@ -12,8 +12,9 @@ development:
 
 test:
   <<: *default
-  database: cybertaza
+  database: cybertaza_test
 
 production:
   <<: *default
+  url: <%= ENV["DATABASE_URL"]%>
   database: <%= ENV['DB_NAME'] %>

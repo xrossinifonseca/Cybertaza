@@ -12,4 +12,14 @@ class Product < ApplicationRecord
 #     Rails.application.routes.url_helpers.url_for(image) if image.attached?
 #  end
 
+scope :by_colors, ->(colors) do
+  if colors.is_a?(Array) && !colors.empty?
+    joins(:color).where("colors.name IN (?)", colors)
+  else
+    all
+  end
+end
+
+
+
 end

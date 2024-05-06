@@ -3,16 +3,28 @@ module Products
   class FilterProductListService
 
 
-    def self.filter_product(params)
 
-      case params
+    # exemplo query url
+    # api/v1/products?color%5B%5D=green&color%5B%5D=white&&price_order=lowest_price&per_page=1&page=1
+
+    def self.by_assortment(params)
+      colors = params[:color]
+      price_order = params[:price_order]
+      page = params[:page]
+      per_page = params[:per_page]
+
+      products = Product.by_colors(colors)
+
+      case price_order
       when 'lowest_price'
-        products = Product.order(price: :asc)
+      products =   products.order(price: :asc)
       when 'biggest_price'
-        products = Product.order(price: :desc)
+       products = products.order(price: :desc)
       else
-        products = Product.all
+        products
       end
+
+      products.page(page).per(per_page)
     end
 
   end
