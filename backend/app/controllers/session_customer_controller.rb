@@ -6,9 +6,7 @@ class SessionCustomerController < ApplicationController
 
       if customer && customer.authenticate(session_params[:password])
 
-        token = create_customer_token(customer.id)
-
-        set_cookie(token)
+        create_customer_token(customer.id)
 
         return render json: { message: "Login bem-sucedido", customer: customer.as_json(except: :password_digest) }, status: :ok
       end

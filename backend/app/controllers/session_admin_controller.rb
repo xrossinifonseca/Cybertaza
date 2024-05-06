@@ -1,16 +1,15 @@
 
 class SessionAdminController < ApplicationController
 
+  skip_before_action :authenticate_admin, only: [:login]
 
   def login
 
-    user = User.find_by(email:session_params[:email])
+     user = User.find_by(email:session_params[:email])
 
     if user && user.authenticate(session_params[:password])
 
-      token = create_admin_token(user.id)
-
-      set_cookie(token)
+      create_admin_token(user.id)
 
       user_info = user_with_permissions(user)
 
@@ -24,7 +23,6 @@ class SessionAdminController < ApplicationController
   def logout
     cookies.delete(:check_token)
     cookies.delete(:auth_token)
-
     render json: { message: "Logout bem-sucedido" }, status: :ok
   end
 
