@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
 
-  skip_before_action :authenticate_admin, only: [:index, :search]
+  skip_before_action :authenticate_admin, only: [:index, :search,:show]
   before_action :set_product, only: [:destroy, :update,:show]
 
   def index
@@ -10,8 +10,8 @@ class ProductsController < ApplicationController
   end
 
   def show
-    # @image_url = rails_blob_path(@product.image, only_path: true)
-    render json: url_for(@product.image)
+      render json: {product:@product}
+
   end
 
   def search
@@ -84,11 +84,13 @@ class ProductsController < ApplicationController
 
   def products_list(products)
       products.map do |product|
-      if product.image.attached?
-        { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
-      else
-        { id: product.id, name: product.name,price:product.price,color:product.color, image_url: ""  }
-      end
+       {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      color: product.color,
+      image_url: product.image.attached? ? url_for(product.image) : ""
+       }
   end
 
   end
