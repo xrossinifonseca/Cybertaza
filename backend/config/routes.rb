@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
     # product
     patch '/products', to: 'products#update'
-    get '/search', to: 'products#search'
+    get '/search_product', to: 'products#search'
 
 
     # customers
