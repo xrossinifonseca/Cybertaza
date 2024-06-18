@@ -2,11 +2,13 @@ class ProductsController < ApplicationController
 
   skip_before_action :authenticate_admin, only: [:index, :search,:show]
   before_action :set_product, only: [:destroy, :update,:show]
+  include Paginable
 
   def index
     products  = Products::FilterProductListService.by_assortment(params)
-    total_pages = products.total_pages
-    render json: {products: products_list(products),total_pages: total_pages}
+    paginated_products = paginate(products)
+
+    render json: {products: products_list(paginated_products),meta: pagination_meta(paginated_products)}
   end
 
   def show
