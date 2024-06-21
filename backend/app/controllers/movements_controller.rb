@@ -28,14 +28,24 @@ class MovementsController < ApplicationController
 
 
   def create
+
+    product_code = Product.arel_table[:code]
+    product = Product.where(product_code.eq(movement_params[:product_code].downcase)).first
+    if product.nil?
+      render json: { error: "Product not found" }, status: :not_found
+      return
+    end
+
+
     begin
-    movement = Movement.create!(movement_params)
-    render json: {message:"movement successfully created", movement:movement}, status: :created
+    movement = Movement.create!(movement_params.merge(product_id: product.id))
+    render json: {message:"movement successfully created", movement: movement}, status: :created
 
     rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
-    rescue e
-      render json: { error: "There was an internal server error" }, status: :internal_server_error
+  rescue => e
+    p e.message
+    render json: { error: "Internal server error" }, status: :internal_server_error
     end
   end
 
@@ -43,7 +53,7 @@ class MovementsController < ApplicationController
   private
 
   def movement_params
-    params.require(:movement).permit(:quantity,:product_id,:type_movement,:date_movement)
+    params.require(:movement).permit(:quantity,:product_code,:type_movement,:date_movement)
   end
 
   def filter_params
