@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_15_005354) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_18_190722) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -60,6 +60,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_005354) do
   create_table "movements", force: :cascade do |t|
     t.integer "quantity", null: false
     t.bigint "product_id", null: false
+    t.string "product_code", null: false
     t.string "type_movement", null: false
     t.datetime "date_movement", null: false
     t.datetime "created_at", null: false
@@ -80,6 +81,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_005354) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "color_id"
+    t.string "code", null: false
+    t.string "slug", null: false
+    t.index ["code"], name: "index_products_on_code", unique: true
+    t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
   create_table "stocks", force: :cascade do |t|
