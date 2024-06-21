@@ -40,11 +40,17 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_admin
+    begin
    if decoded = validate_admin_session(cookies)
     @current_user = User.find(decoded["user_id"])
-    else
-    nil
     end
+    rescue
+      cookies.delete(:check_token)
+      cookies.delete(:auth_token)
+      render_forbidden("forbidden")
+    end
+
+
   end
 
 end
