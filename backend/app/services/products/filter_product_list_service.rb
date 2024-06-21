@@ -10,8 +10,7 @@ module Products
     def self.by_assortment(params)
       colors = params[:color]
       price_order = params[:price_order]
-      page = params[:page]
-      per_page = params[:per_page]
+
 
       products = Product.by_colors(colors)
 
@@ -24,7 +23,6 @@ module Products
         products
       end
 
-      products.page(page).per(per_page)
     end
 
   end

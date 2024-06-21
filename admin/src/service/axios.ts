@@ -47,5 +47,5 @@ export const deleteProductById = async (id: number) => {
 }
 
 export const getUser = async () => {
-  return api.get('admin/user')
+  return api.get('admin/profile')
 }

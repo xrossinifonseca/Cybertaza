@@ -43,7 +43,7 @@ const handleSubmit = async () => {
     errors[key] = ''
   }
 
-  if (!values.price || !values.name || !imgUrl.value) {
+  if (!values.price || !values.name || !imgUrl.value || !values.color_id) {
     if (!values.name) {
       errors.name = 'Necessário informar nome do produto'
     }

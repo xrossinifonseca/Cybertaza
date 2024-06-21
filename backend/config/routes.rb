@@ -5,10 +5,15 @@ Rails.application.routes.draw do
     resources :colors
     resources :products
     resources :customers, only: [:index, :show, :create, :update, :destroy]
+    resources :movements, only: [:index, :create]
+    resources :stock
 
     # product
     patch '/products', to: 'products#update'
-    get '/search', to: 'products#search'
+    get '/search_product', to: 'products#search'
+
+
+    # movements
 
 
     # customers
@@ -23,6 +28,10 @@ Rails.application.routes.draw do
       post "/login", to: 'session_admin#login'
       post "/logout", to: 'session_admin#logout'
     end
+
+
+
+
 
   end
 

@@ -1,17 +1,19 @@
 class ProductsController < ApplicationController
 
-  skip_before_action :authenticate_admin, only: [:index, :search]
+  skip_before_action :authenticate_admin, only: [:index, :search,:show]
   before_action :set_product, only: [:destroy, :update,:show]
+  include Paginable
 
   def index
     products  = Products::FilterProductListService.by_assortment(params)
-    total_pages = products.total_pages
-    render json: {products: products_list(products),total_pages: total_pages}
+    paginated_products = paginate(products)
+
+    render json: {products: products_list(paginated_products),meta: pagination_meta(paginated_products)}
   end
 
   def show
-    # @image_url = rails_blob_path(@product.image, only_path: true)
-    render json: url_for(@product.image)
+      render json: {product:@product}
+
   end
 
   def search
@@ -37,10 +39,12 @@ class ProductsController < ApplicationController
       rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
       rescue => e
+        p e.message
         handleErrorExcpetion(e)
        end
   end
 
+  # não permitir alterar o código do produto
   def update
     begin
       Product.transaction do
@@ -79,16 +83,21 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.permit(:name,:price,:color_id,:image)
+    params.permit(:name,:price,:color_id,:image,:code,:slug)
   end
+
 
   def products_list(products)
       products.map do |product|
-      if product.image.attached?
-        { id: product.id, name: product.name,price:product.price,color:product.color, image_url: url_for(product.image) }
-      else
-        { id: product.id, name: product.name,price:product.price,color:product.color, image_url: ""  }
-      end
+       {
+      id: product.id,
+      name: product.name,
+      slug:product.slug,
+      code:product.code,
+      price: product.price,
+      color: product.color,
+      image_url: product.image.attached? ? url_for(product.image) : ""
+       }
   end
 
   end

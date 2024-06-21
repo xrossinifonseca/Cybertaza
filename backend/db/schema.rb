@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_30_223250) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_18_190722) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -57,6 +57,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_223250) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "movements", force: :cascade do |t|
+    t.integer "quantity", null: false
+    t.bigint "product_id", null: false
+    t.string "product_code", null: false
+    t.string "type_movement", null: false
+    t.datetime "date_movement", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_movements_on_product_id"
+    t.check_constraint "type_movement::text = ANY (ARRAY['entrance'::character varying, 'exit'::character varying]::text[])", name: "type_movement_check"
+  end
+
   create_table "privileges", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -69,6 +81,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_223250) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "color_id"
+    t.string "code", null: false
+    t.string "slug", null: false
+    t.index ["code"], name: "index_products_on_code", unique: true
+    t.index ["slug"], name: "index_products_on_slug", unique: true
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.integer "quantity"
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_stocks_on_product_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -82,4 +106,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_223250) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "movements", "products"
+  add_foreign_key "stocks", "products"
 end
