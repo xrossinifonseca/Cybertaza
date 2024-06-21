@@ -39,10 +39,12 @@ class ProductsController < ApplicationController
       rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
       rescue => e
+        p e.message
         handleErrorExcpetion(e)
        end
   end
 
+  # não permitir alterar o código do produto
   def update
     begin
       Product.transaction do
@@ -81,14 +83,17 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.permit(:name,:price,:color_id,:image)
+    params.permit(:name,:price,:color_id,:image,:code,:slug)
   end
+
 
   def products_list(products)
       products.map do |product|
        {
       id: product.id,
       name: product.name,
+      slug:product.slug,
+      code:product.code,
       price: product.price,
       color: product.color,
       image_url: product.image.attached? ? url_for(product.image) : ""
