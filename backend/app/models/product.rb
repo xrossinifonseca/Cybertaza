@@ -5,9 +5,12 @@ class Product < ApplicationRecord
   has_one :stock, dependent: :destroy
   after_create :create_stock
 
-  validates :name, presence: { message: "O nome é obrigatório" }
-  validates :price, numericality: { greater_than_or_equal_to: 0, message: "preço deve ser maior ou igual a zero" }
-  validates :color_id, presence: {message: "Necesário informar cor do produto"}
+  validates :name, presence: { message: "is required" }
+  validates :price, numericality: { greater_than_or_equal_to: 0, message: "Price must be greater than 0" }
+  validates :color_id, presence: {message: "It is necessary to inform the product color"}
+  validates :code, presence: {message: "is required"}, uniqueness: true
+  validates :slug, presence: {message: "is required"}, uniqueness: true
+
 
 
     def create_stock
