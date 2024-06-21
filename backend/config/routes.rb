@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     resources :products
     resources :customers, only: [:index, :show, :create, :update, :destroy]
     resources :movements, only: [:index, :create]
-
+    resources :stock
 
     # product
     patch '/products', to: 'products#update'
