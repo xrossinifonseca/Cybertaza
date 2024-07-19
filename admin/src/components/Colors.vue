@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import { api } from '../service/axios'
-
-defineProps<{
-  selectedId: number
-}>()
 
 type Color = {
   id: number
@@ -19,7 +15,9 @@ const fetchColors = async (): Promise<void> => {
   colors.value = data.colors
 }
 
-fetchColors()
+onBeforeMount(() => {
+  fetchColors()
+})
 </script>
 
 <template>
@@ -28,9 +26,8 @@ fetchColors()
       type="button"
       v-for="color in colors"
       :key="color.id"
-      @click.capture="$emit('get-color', color.id)"
-      :class="{ 'bg-slate-950': selectedId === color.id }"
-      class="text-sm flex items-center gap-2 rounded-full p-2 border text-white hover:bg-slate-950 cursor-pointer"
+      @click.capture="$emit('get-values', color)"
+      class="text-sm flex items-center gap-2 rounded-full p-2 border text-white hover:bg-slate-500 cursor-pointer"
     >
       <div class="w-4 h-4 rounded-full" :style="{ backgroundColor: color.hex_code }"></div>
       {{ color.name }}

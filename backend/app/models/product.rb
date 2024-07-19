@@ -13,9 +13,12 @@ class Product < ApplicationRecord
 
 
 
-    def create_stock
-      Stock.create(quantity:0,product_id:id,)
+  def create_stock
+    Stock.transaction do
+      stock = Stock.create(quantity: 0, product_id: id)
+      raise ActiveRecord::Rollback if stock.nil?
     end
+  end
 
 
   scope :by_colors, ->(colors) do
@@ -26,12 +29,3 @@ class Product < ApplicationRecord
     end
 end
 end
-
-
-
-# def create_stock
-#   Stock.transaction do
-#     stock = Stock.create(quantity: 0, product_id: id)
-#     raise ActiveRecord::Rollback if stock.nil? # Rollback if stock creation fails
-#   end
-# end

@@ -2,36 +2,48 @@
 import ModalCreate from '../components/products/ModalCreate.vue'
 import LoadingBalls from '../components/loading/LoadingBalls.vue'
 import TableProducts from '../components/products/TableProducts.vue'
-import { reactive } from 'vue'
+import Filter from '../components/products/Filter.vue'
+import FiltersRecovered from '../components/products/FiltersRecovered.vue'
+import { onBeforeMount, reactive, watch } from 'vue'
 import { useProductsStore } from '../stores/products/productsStore'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '../stores/user/userStore'
+import { useRoute } from 'vue-router'
 
 const modal = reactive({
   create: false
 })
 
 const productsStore = useProductsStore()
-const { products, total_pages } = storeToRefs(productsStore)
-
 const userStore = useUserStore()
+const { products, total_pages } = storeToRefs(productsStore)
 const { user } = storeToRefs(userStore)
+const route = useRoute()
 
 const toggleModal = () => {
   modal.create = !modal.create
 }
-productsStore.getProducts()
+
+onBeforeMount(() => {
+  productsStore.getProducts()
+})
+
+watch(
+  () => route.query,
+  () => {
+    productsStore.getProducts()
+  }
+)
 </script>
 
 <template>
-  <div class="overflow-y-auto h-screen">
+  <div class="overflow-y-auto h-screen flex justify-center">
     <LoadingBalls v-if="productsStore.loading" />
     <ModalCreate v-if="modal.create" @close-modal="toggleModal" />
 
-    <div class="w-full min-h-screen p-5 space-y-20">
+    <div class="w-full min-h-screen p-5 space-y-20 container">
       <div class="mt-10 w-full flex justify-around">
         <h1 class="text-4xl text-white">Produtos</h1>
-
         <button
           @click="toggleModal"
           class="btn btn-outline btn-success"
@@ -44,6 +56,8 @@ productsStore.getProducts()
           </svg>
         </button>
       </div>
+      <Filter />
+      <FiltersRecovered />
       <TableProducts :products="products" :total_pages="total_pages" />
     </div>
   </div>

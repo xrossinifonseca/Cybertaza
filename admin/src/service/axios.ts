@@ -12,6 +12,13 @@ export interface Product {
   image?: File | null
 }
 
+interface QueryProducts {
+  colors?: string[]
+  price_order?: string
+  per_page?: number
+  page?: number
+}
+
 export const api = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
   withCredentials: true
@@ -38,8 +45,13 @@ export const login = async (body: LoginCustomer): Promise<AxiosResponse> => {
   return api.post('/admin/login', body)
 }
 
-export const allProducts = async (page: number, perPage: number) => {
-  return api.get(`products?page=${page}&per_page=${perPage}`)
+export const allProducts = async (query: QueryProducts) => {
+  return api.get(`products`, {
+    params: {
+      color: query.colors,
+      price_order: query.price_order
+    }
+  })
 }
 
 export const deleteProductById = async (id: number) => {

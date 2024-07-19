@@ -7,13 +7,12 @@ class ProductsController < ApplicationController
   def index
     products  = Products::FilterProductListService.by_assortment(params)
     paginated_products = paginate(products)
-
-    render json: {products: products_list(paginated_products),meta: pagination_meta(paginated_products)}
+    products_serialized = ActiveModelSerializers::SerializableResource.new(paginated_products, each_serializer: ProductSerializer)
+    render json: { products:products_serialized, meta: pagination_meta(paginated_products)}, status: :ok
   end
 
   def show
       render json: {product:@product}
-
   end
 
   def search
@@ -23,11 +22,10 @@ class ProductsController < ApplicationController
       products = []
     else
       product_name = Product.arel_table[:name]
-      products_found = Product.where(product_name.matches("%#{query}%")).limit(10)
-      products = products_list(products_found)
+      products = Product.where(product_name.matches("%#{query}%")).limit(10)
     end
+    render json: products, each_serializer: ProductSerializer
 
-    render json: {products:products}
   end
 
   def create
@@ -87,30 +85,14 @@ class ProductsController < ApplicationController
   end
 
 
-  def products_list(products)
-      products.map do |product|
-       {
-      id: product.id,
-      name: product.name,
-      slug:product.slug,
-      code:product.code,
-      price: product.price,
-      color: product.color,
-      image_url: product.image.attached? ? url_for(product.image) : ""
-       }
-  end
-
-  end
-
-
   def handleErrorExcpetion(e)
     case e.message
-    when "Usuário sem permissão."
+    when "user has no permission."
       render json: { error: e.message }, status: :forbidden
     when "produto não encontrado."
       render json: { error: e.message }, status: :not_found
     else
-      render json: { error: "Houve um erro interno no servidor" }, status: :internal_server_error
+      render json: { error: e.message }, status: :unprocessable_entity
     end
   end
 end
