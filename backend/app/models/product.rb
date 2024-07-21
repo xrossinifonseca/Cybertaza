@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   belongs_to:color
   has_one_attached :image
   has_many :movements, dependent: :destroy
+  has_many :cart_items, dependent: :destroy
   has_one :stock, dependent: :destroy
   after_create :create_stock
 
