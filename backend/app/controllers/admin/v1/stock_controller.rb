@@ -1,4 +1,4 @@
-class StockController < ApplicationController
+class Admin::V1::StockController < Admin::V1::BaseController
 
   def index
 
@@ -23,7 +23,5 @@ class StockController < ApplicationController
   def search_params
   params.require.permit(:code)
   end
-
-
 
 end

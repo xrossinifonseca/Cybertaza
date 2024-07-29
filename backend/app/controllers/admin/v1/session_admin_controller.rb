@@ -1,5 +1,4 @@
-
-class SessionAdminController < ApplicationController
+class Admin::V1::SessionAdminController < Admin::V1::BaseController
 
   skip_before_action :authenticate_admin, only: [:login]
 

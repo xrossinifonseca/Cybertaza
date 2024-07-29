@@ -1,4 +1,5 @@
-class CustomersController < ApplicationController
+  class Api::V1::CustomersController < Api::V1::BaseController
+
 
   include AccessValidator
 

@@ -1,5 +1,4 @@
-class SessionCustomerController < ApplicationController
-
+class Api::V1::SessionController < Api::V1::BaseController
 
     def login
       customer =Customer.find_by(email:session_params[:email])

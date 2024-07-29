@@ -2,7 +2,7 @@
 
   module AccessValidator
 
-    def vaidate_token(cookies)
+    def validate_token(cookies)
      token = cookies.signed[:auth_token]
 
     if token.blank?
@@ -22,7 +22,7 @@
 
 
     def validate_admin_session(cookies)
-     decoded = vaidate_token(cookies)
+     decoded = validate_token(cookies)
 
      if decoded && decoded["role"] != "admin"
       render_forbidden("Acesso não autorizado.")
@@ -31,6 +31,17 @@
 
      decoded
     end
+
+    def validate_customer_session(cookies)
+      decoded = validate_token(cookies)
+
+      if decoded.nil?
+       render_forbidden("Acesso não autorizado.")
+       return nil
+      end
+
+      decoded
+     end
 
 
     private

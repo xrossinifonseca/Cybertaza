@@ -1,7 +1,7 @@
-class ProductsController < ApplicationController
+  class Admin::V1::ProductsController < Admin::V1::BaseController
 
-  skip_before_action :authenticate_admin, only: [:index, :search,:show]
   before_action :set_product, only: [:destroy, :update,:show]
+
   include Paginable
 
   def index

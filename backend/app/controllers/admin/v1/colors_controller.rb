@@ -1,4 +1,5 @@
-class ColorsController < ApplicationController
+  class Api::V1::ColorsController < Api::V1::BaseController
+
 
   def index
     @colors = Color.all
