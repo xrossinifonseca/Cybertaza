@@ -5,11 +5,11 @@ RSpec.describe Cart, type: :model do
   before do
     @cart = Cart.new
     @customer = Customer.create!(name:"test",email:"test@teste.com",password:"123teste")
+
   end
 
 
   it "should create a cart if customer has not a cart" do
-
     @cart.customer = @customer
     @cart.save
     expect(@cart).to be_valid
@@ -38,12 +38,19 @@ RSpec.describe Cart, type: :model do
 
   end
 
-  it "should show the total amount cart" do
+  # it "should show the total amount cart" do
 
+  #  cart =  Cart.create!(customer: @customer)
 
+  #   color = Color.create!(name:"white",hex_code:"#fff")
+  #   product = Product.create!(name:"test product",slug:"test-product",price:10,code:"#2222",color:color)
+  #   product_2 = Product.create!(name:"test product 2",slug:"test-product-2",price:20,code:"#22221",color:color)
 
-  end
+  #  CartItem.create!(product:product,quantity:1,cart:cart)
+  #  CartItem.create!(product:product_2,quantity:1,cart:cart)
 
+  #  expect(cart.total).to eq(30)
+  # end
 
 
 
