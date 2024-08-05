@@ -9,7 +9,6 @@ Rails.application.routes.draw do
         resources :colors
         resources :products
         resources :customers, only: [:index, :show, :create, :update, :destroy]
-        resources :cart_items
 
 
         # search produict
@@ -17,8 +16,20 @@ Rails.application.routes.draw do
 
 
 
-        get '/cart', to: 'carts#show'
-        delete '/cart_items', to: 'cart_items#destroy'
+
+        scope "cart" do
+          get '/', to: 'carts#show'
+          post '/add', to: 'cart_items#create'
+
+          get '/increase/:id', to: 'cart_items#add'
+
+          delete '/remove/:id', to: 'cart_items#destroy'
+
+
+
+        end
+
+
 
 
         # customers
