@@ -35,6 +35,7 @@ const errors = reactive<Errors>({
   color_id: '',
   image: ''
 })
+
 const imgUrl = ref<string>('')
 const loading = ref<boolean>(false)
 
@@ -91,8 +92,8 @@ const handleImageChange = (event: Event) => {
   }
 }
 
-const getColorId = (id: number) => {
-  values.color_id = id
+const getColor = (color) => {
+  values.color_id = color.id
 }
 </script>
 
@@ -178,7 +179,7 @@ const getColorId = (id: number) => {
           <span v-if="errors.color_id" class="text-medium text-red-500 text-lg">{{
             errors.color_id
           }}</span>
-          <Colors :selectedId="values.color_id" @get-color="getColorId" />
+          <Colors @get-values="getColor" />
         </div>
 
         <div class="flex justify-center">

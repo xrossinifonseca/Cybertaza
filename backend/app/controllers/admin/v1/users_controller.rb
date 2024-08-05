@@ -1,4 +1,7 @@
-class UsersController < ApplicationController
+class Admin::V1::UsersController < Api::V1::BaseController
+
+
+
   # before_action :set_user, only: %i[ show edit update destroy ]
 
   def index
@@ -7,17 +10,15 @@ class UsersController < ApplicationController
   end
 
   def current_user_information
-    permissions = Permission::PERMISSION[@current_user.role.to_sym]
-    user = {id:@current_user.id, name: @current_user.name, permissions: permissions}
+    # permissions = PermissionCheck::PERMISSION[@current_user.role.to_sym]
+    user = {id:@current_user.id, name: @current_user.name}
     render json: user
   end
 
 
 
   private
-    # def set_user
-    #   @user = User.find(params[:id])
-    # end
+
 
     def user_params
       params.require(:user).permit(:name, :email, :password_digest)

@@ -2,24 +2,17 @@ import { allProducts } from '../../service/axios'
 import { defineStore } from 'pinia'
 import type { Product } from 'src/types/productTypes'
 import { ref } from 'vue'
-
-interface Products {
-  id: number
-  name: string
-  price: string
-  color_id: number
-  image_url: string
-  created_at: string
-  updated_at: string
-}
+import { useRoute } from 'vue-router'
 
 export const useProductsStore = defineStore('productsStore', () => {
-  const products = ref<Products[]>([])
+  const products = ref<Product[]>([])
   const loading = ref<boolean>(true)
   const total_pages = ref<number>(1)
+  const route = useRoute()
 
   const getProducts = async () => {
-    const response = await allProducts(1, 10)
+    loading.value = true
+    const response = await allProducts(route.query)
     loading.value = false
     total_pages.value = response.data.total_pages
     products.value = response.data.products

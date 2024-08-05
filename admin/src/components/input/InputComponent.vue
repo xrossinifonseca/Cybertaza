@@ -9,10 +9,6 @@ defineProps<{
 }>()
 
 defineEmits(['update:modelValue'])
-
-const onInput = (e: { target: { value: string; name: string } }) => {
-  e.target['name'] = e.target.value
-}
 </script>
 
 <template>
@@ -23,7 +19,6 @@ const onInput = (e: { target: { value: string; name: string } }) => {
       :name="name"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       :placeholder="placeholder"
-      :input="onInput"
       :class="{
         'border-red-500': borderError,
         'border-transparent': !borderError,

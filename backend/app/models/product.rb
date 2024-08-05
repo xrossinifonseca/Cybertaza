@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   belongs_to:color
   has_one_attached :image
   has_many :movements, dependent: :destroy
+  has_many :cart_items, dependent: :destroy
   has_one :stock, dependent: :destroy
   after_create :create_stock
 
@@ -13,9 +14,12 @@ class Product < ApplicationRecord
 
 
 
-    def create_stock
-      Stock.create(quantity:0,product_id:id,)
+  def create_stock
+    Stock.transaction do
+      stock = Stock.create(quantity: 0, product_id: id)
+      raise ActiveRecord::Rollback if stock.nil?
     end
+  end
 
 
   scope :by_colors, ->(colors) do
@@ -26,12 +30,3 @@ class Product < ApplicationRecord
     end
 end
 end
-
-
-
-# def create_stock
-#   Stock.transaction do
-#     stock = Stock.create(quantity: 0, product_id: id)
-#     raise ActiveRecord::Rollback if stock.nil? # Rollback if stock creation fails
-#   end
-# end

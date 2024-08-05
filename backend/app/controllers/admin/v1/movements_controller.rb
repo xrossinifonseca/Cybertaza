@@ -1,6 +1,7 @@
-class MovementsController < ApplicationController
+  class Admin::V1::MovementsController < Admin::V1::BaseController
 
    before_action :check_permission, only: [:create]
+
    include Paginable
    include FilterByDate
 
