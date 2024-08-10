@@ -4,10 +4,12 @@ class Api::V1::BaseController < ApplicationController
   include JwtManager
   include AccessValidator
 
+  before_action :authenticate_customer
   before_action :set_cart
 
 
   protected
+
   def create_customer_token(id)
     payload = {customer_id:id, role:"customer"}
     token = generate_token(payload)
@@ -40,6 +42,19 @@ class Api::V1::BaseController < ApplicationController
         secure: true,
         same_site: :strict
       }
+  end
+
+
+  def authenticate_customer
+    begin
+   if decoded = validate_customer_session(cookies)
+    @current_customer = Customer.find(decoded["customer_id"])
+    end
+
+    rescue
+      cookies.delete(:check_token)
+      cookies.delete(:auth_token)
+    end
   end
 
 end
