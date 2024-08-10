@@ -8,10 +8,9 @@ Rails.application.routes.draw do
 
         resources :colors
         resources :products
-        resources :customers, only: [:index, :show, :create, :update, :destroy]
 
 
-        # search produict
+        # search product
         get '/search_product', to: 'products#search'
 
 
@@ -24,18 +23,17 @@ Rails.application.routes.draw do
           get '/increase/:id', to: 'cart_items#add'
 
           delete '/remove/:id', to: 'cart_items#destroy'
-
-
-
         end
 
 
+        scope "session" do
+        post '/login', to: 'session_customer#login'
+        post '/logout', to: 'session_customer#logout'
+        post 'signup', to: 'customers#create'
+        end
 
 
-        # customers
-        post '/session/login', to: 'session_customer#login'
-        post '/session/logout', to: 'session_customer#logout'
-        get '/profile', to: 'customers#profile'
+        get '/me', to: 'customers#customer_data'
 
 
 
