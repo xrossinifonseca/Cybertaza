@@ -10,7 +10,7 @@ class Api::V1::SessionCustomerController < Api::V1::BaseController
 
         create_customer_token(customer.id)
 
-        return render json: { message: "Login successful", customer: CustomerSerialize.new(customer)}, status: :ok
+        return render json: { message: "Login successful", customer: CustomerSerializer.new(customer)}, status: :ok
       end
 
       render json: { error: "invalid credentials" }, status: :unauthorized
